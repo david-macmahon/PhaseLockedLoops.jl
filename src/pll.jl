@@ -1,11 +1,9 @@
 using DSP
 using Plots
 
-function make_testsig(cf=1/40; N=1000, noise_level=0)
-    testsig = noise_level * rand(ComplexF32, N)
-    #twin = (N÷4):(3N÷4)
-    twin = 1:N
-    testsig[twin] .+= cispi.(2*cf.*twin)
+function make_testsig(cf=1/40; N=1000, twin=:, noise_level=0)
+    testsig = noise_level * (2*rand(ComplexF32, N) .- (1+1im))
+    testsig[twin] .+= cispi.(2*cf .* axes(testsig,1)[twin])
 end
 
 function pll(sig; reffreq=1, cutoff=0.25, gain=1e-3)
