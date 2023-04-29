@@ -15,19 +15,20 @@ function pll(sig; reffreq=1, cutoff=0.25, gain=1e-3)
     refsig = one(eltype(sig))
     pll_integral = zero(real(eltype(sig)))
     pllints = zeros(eltype(pll_integral), size(sig))
-    refout = zeros(sig)
-    pdi = zeros(sig)
-    pdf = zeros(sig)
+    refout = zeros(eltype(sig), size(sig))
+    pdi = similar(sig)
+    pdf = similar(sig)
     for (t, x) in enumerate(sig)
         # BEGIN PLL block
         pd_instantaneous = x * conj(refsig)
-        push!(pdi, pd_instantaneous)
         pd_filtered = filt(loop_lpf, [pd_instantaneous])[1]
-        push!(pdf, pd_filtered)
         pll_integral += angle(pd_filtered) * gain
-        push!(pllints, pll_integral)
         refsig = cispi(2 * reffreq * (t + pll_integral))
-        push!(refout, refsig)
+
+        pdi[t] = pd_instantaneous
+        pdf[t] = pd_filtered
+        pllints[t] = pll_integral
+        refout[t] = refsig
         # END PLL block
     end
 
