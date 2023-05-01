@@ -1,5 +1,6 @@
+module PhaseLockedLoops
+
 using DSP
-using Plots
 
 function make_testsig(cf=1/40; N=1000, twin=:, noise_level=0)
     testsig = noise_level * (2*rand(ComplexF32, N) .- (1+1im))
@@ -34,3 +35,5 @@ function pll(sig; reffreq=1, cutoff=0.25, gain=1e-3)
 
     refout, pdi, pdf, pllints
 end
+
+end # module PhaseLockedLoops
